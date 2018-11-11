@@ -36,7 +36,8 @@ import javax.swing.table.DefaultTableModel;
 public class Design extends javax.swing.JFrame {
 
      File pdf_location;
-     String pdf_name;
+     File image_location;
+     String pdf_name,img_num;
      
      Main obj= new Main();
      
@@ -86,10 +87,13 @@ public class Design extends javax.swing.JFrame {
         name_label = new javax.swing.JLabel();
         roll_label = new javax.swing.JLabel();
         course_label = new javax.swing.JLabel();
+        image_lable = new javax.swing.JLabel();
         print_button = new javax.swing.JButton();
         save_panel1 = new javax.swing.JPanel();
         pdf_pb = new javax.swing.JProgressBar();
         progress_label = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        Image_Folder_selection_button = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("ID CARD AUTOMATED GENERATION [MULTIPLE]- BETA 1.0");
@@ -204,7 +208,7 @@ public class Design extends javax.swing.JFrame {
                 pdf_confirm_buttonActionPerformed(evt);
             }
         });
-        save_panel.add(pdf_confirm_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 160, 130, 50));
+        save_panel.add(pdf_confirm_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 200, 130, 50));
 
         wel_label.setFont(new java.awt.Font("Courier New", 1, 18)); // NOI18N
         wel_label.setText("SAVE AS PDF");
@@ -214,19 +218,24 @@ public class Design extends javax.swing.JFrame {
 
         pdf_panel.setBackground(new java.awt.Color(255, 255, 255));
         pdf_panel.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        pdf_panel.setMinimumSize(new java.awt.Dimension(2480, 3508));
         pdf_panel.setPreferredSize(new java.awt.Dimension(500, 500));
         pdf_panel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         name_label.setText("NAME");
-        pdf_panel.add(name_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(36, 85, 420, 61));
+        pdf_panel.add(name_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(36, 85, 230, 61));
 
         roll_label.setText("ROLL");
-        pdf_panel.add(roll_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(36, 158, 430, 61));
+        pdf_panel.add(roll_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(36, 158, 240, 61));
 
         course_label.setText("COURSE");
-        pdf_panel.add(course_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(36, 231, 440, 61));
+        pdf_panel.add(course_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(36, 231, 230, 61));
 
-        display_panel.add(pdf_panel, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 120, -1, -1));
+        image_lable.setIcon(new javax.swing.ImageIcon("C:\\Users\\moham\\Desktop\\IMAGES\\1.jpg")); // NOI18N
+        image_lable.setText("jLabel1");
+        pdf_panel.add(image_lable, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 70, 190, 210));
+
+        display_panel.add(pdf_panel, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 110, 500, 510));
 
         print_button.setVisible(false);
         print_button.setBackground(new java.awt.Color(51, 153, 255));
@@ -249,6 +258,20 @@ public class Design extends javax.swing.JFrame {
         save_panel1.add(progress_label, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
 
         display_panel.add(save_panel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1080, 80, 370, 110));
+
+        jLabel1.setFont(new java.awt.Font("Georgia", 1, 18)); // NOI18N
+        jLabel1.setText("Select Folder for Images");
+        jLabel1.setName("image_selection_label"); // NOI18N
+        display_panel.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1090, 270, -1, -1));
+
+        Image_Folder_selection_button.setText("Image Folder");
+        Image_Folder_selection_button.setName("Image_folder_button"); // NOI18N
+        Image_Folder_selection_button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Image_Folder_selection_buttonActionPerformed(evt);
+            }
+        });
+        display_panel.add(Image_Folder_selection_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(1090, 310, -1, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -273,22 +296,27 @@ public class Design extends javax.swing.JFrame {
    
     private void print_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_print_buttonActionPerformed
 
-         pdf_pb.setStringPainted(true);
+        pdf_pb.setStringPainted(true);
         for(int i =0,j=0;i<MainTable.getRowCount();i++)
         {    
+            //
            pdf_pb.setValue(i);
            pdf_pb.updateUI();
+           img_num = (String.valueOf(MainTable.getValueAt(i, j+3)));
+           String img_loc =image_location.getAbsolutePath();
 
            name_label.setText(String.valueOf(MainTable.getValueAt(i, j)));
            roll_label.setText(String.valueOf(MainTable.getValueAt(i, j+1)));
            course_label.setText(String.valueOf(MainTable.getValueAt(i, j+2)));
+           image_lable.setIcon(new javax.swing.ImageIcon(img_loc+"\\"+(i+1)+".jpg"));
+           
                 
       Document document = new Document();
     try {
       PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdf_location+"\\"+MainTable.getValueAt(i,j)+".pdf"));
       document.open();
       PdfContentByte contentByte = writer.getDirectContent();
-      PdfTemplate template = contentByte.createTemplate(500, 500);
+      PdfTemplate template = contentByte.createTemplate(500,500);
       Graphics2D g2 = template.createGraphics(500, 500);
       pdf_panel.print(g2);
       g2.dispose();
@@ -306,6 +334,7 @@ public class Design extends javax.swing.JFrame {
            JOptionPane.showMessageDialog(null, "PDF Files successfully generated", " Successfull " , JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_print_buttonActionPerformed
 
+    
     private void pdf_path_chooseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pdf_path_chooseActionPerformed
         JFileChooser f = new JFileChooser();
         f.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); 
@@ -315,8 +344,7 @@ public class Design extends javax.swing.JFrame {
               pdf_location=f.getSelectedFile(); 
               pdf_confirm_button.setVisible(true);
         } 
-    
-     
+        
     }//GEN-LAST:event_pdf_path_chooseActionPerformed
 
     private void pdf_confirm_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pdf_confirm_buttonActionPerformed
@@ -328,6 +356,17 @@ public class Design extends javax.swing.JFrame {
         this.dispose();
         new Main().setVisible(true);
     }//GEN-LAST:event_back_buttonActionPerformed
+
+    private void Image_Folder_selection_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Image_Folder_selection_buttonActionPerformed
+        JFileChooser f = new JFileChooser();
+        f.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); 
+        int result = f.showSaveDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) 
+        {
+              image_location=f.getSelectedFile(); 
+              
+        } 
+    }//GEN-LAST:event_Image_Folder_selection_buttonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -365,11 +404,14 @@ public class Design extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton Image_Folder_selection_button;
     private javax.swing.JButton back_button;
     private javax.swing.JLabel course_label;
     private javax.swing.JPanel display_panel;
     private javax.swing.JLabel go_back_label;
     private javax.swing.JPanel go_back_panel;
+    private javax.swing.JLabel image_lable;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel name_label;
     private javax.swing.JButton pdf_confirm_button;
     private javax.swing.JPanel pdf_panel;
